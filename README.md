@@ -12,4 +12,5 @@ arXiv pre-print: [https://arxiv.org/abs/2112.03152](https://arxiv.org/abs/2112.0
 -	*bayesian_logistic_regression* folder contains code for Figure 6.
 -	*half_t* folder contains code for Figure 7.
 -	*skinny_gibbs* folder contains code for Figure 8.
+-	*sinkhorn_comparison* folder contains code for Figure 9.
 
