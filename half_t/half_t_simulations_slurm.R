@@ -54,7 +54,7 @@ t_dist_df <- 2
 print('Here we go.')
 
 # Simulation parameters
-no_chains <- 5
+no_chains <- 100
 burnin <- 1e3
 chain_length <- 1e3 + burnin
 
@@ -82,7 +82,7 @@ bounds_df <-
 
 print(bounds_df)
 
-write.table(bounds_df, "gwas_simulations/syntetic_dataset.csv", sep = ",", 
-            col.names = !file.exists("gwas_simulations/syntetic_dataset.csv"), 
+write.table(bounds_df, "gwas_simulations/synthetic_dataset.csv", sep = ",", 
+            col.names = !file.exists("gwas_simulations/synthetic_dataset.csv"), 
             append = TRUE, row.names = FALSE)
 

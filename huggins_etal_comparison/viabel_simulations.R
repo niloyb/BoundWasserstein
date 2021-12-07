@@ -15,12 +15,12 @@ source('estimators.R')
 source('rcpp_functions.R')
 source('stylized_example_mvn/mvn_functions.R')
 
-source('../huggins_comparison/viabel_functions.R')
+source('huggins_comparison/viabel_functions.R')
 
 
 ################################################################################
 # W2L2 varying dimension
-p <- 2
+p <- 2 
 
 alpha <- 0.5
 no_chains <- 20
@@ -42,8 +42,8 @@ for (dimension in seq(2,10,2)){
   crn_mala <- wp_ub_estimate(coupled_chain_sampler_mala, no_chains=no_chains,
                              p=2, metric=metric_l2, parallel=TRUE)
   
-  crn_coupling_ub_mean <- crn_mala$wp_ub # mean(rowMeans(crn_mala$wp_power_p_ub_tracjectories))
-  crn_coupling_ub_sd <- crn_mala$wp_ub_se # sd(rowMeans(crn_mala$wp_power_p_ub_tracjectories))
+  crn_coupling_ub_mean <- crn_mala$wp_ub
+  crn_coupling_ub_sd <- crn_mala$wp_ub_se
   
   # Linear program
   empirical_w2_power_p = rep(NA,no_chains)
@@ -52,14 +52,16 @@ for (dimension in seq(2,10,2)){
     Q_samples <- pp(Q_samples)
     P_samples <- t(SamplerP(chain_length))
     P_samples <- pp(P_samples)
-    empirical_w2_power_p[i] <- transport::wasserstein(Q_samples, P_samples, p=p)
+    empirical_w2_power_p[i] <- transport::wasserstein(Q_samples, P_samples, p=p)^p
   }
-  linear_program_mean = mean(empirical_w2_power_p)
-  linear_program_sd = sd(empirical_w2_power_p)
-  
-  indep_coupling_mean <- (2*dimension)^(1/p)
+  linear_program_mean = mean(empirical_w2_power_p)^(1/p)
+  linear_program_sd = (sd(empirical_w2_power_p)/sqrt(no_chains))^(1/p)
+
+  # Only for p=2
+  indep_coupling_mean <- (2*dimension)^(1/p) 
   indep_coupling_sd <- 0
   
+  # Only for p=2
   cov_mat_sqrt <- expm::sqrtm(cov_mat)
   true_W2_mean <- norm(cov_mat_sqrt-diag(dimension), type = 'F') # True W2L2 known
   true_W2_sd <- 0
@@ -93,7 +95,8 @@ for (dimension in seq(2,10,2)){
       huggins_W2L2_ub_gaussian(unnormalised_target_logpdf, proposal_logpdf, proposal_samples, 
                                proposal_componentwise_variances, elbo_proposal_logpdf, elbo_proposal_samples)
   }
-  
+  huggins_mean = mean(huggins_W2L2_ubs^p)^(1/p)
+  huggins_sd = (sd(huggins_W2L2_ubs^p)/sqrt(no_chains))^(1/p)
   
   trajectory_dimension_df <- 
     rbind(trajectory_dimension_df, 
@@ -101,8 +104,7 @@ for (dimension in seq(2,10,2)){
           data.frame(metric_mean=crn_coupling_ub_mean, metric_sd=crn_coupling_ub_sd, type='mala_crn', dimension=dimension),
           data.frame(metric_mean=linear_program_mean, metric_sd=linear_program_sd, type='linear_program', dimension=dimension),
           data.frame(metric_mean=indep_coupling_mean, metric_sd=indep_coupling_sd, type='indep', dimension=dimension),
-          data.frame(metric_mean=mean(huggins_W2L2_ubs), metric_sd=sd(huggins_W2L2_ubs), 
-                     type='huggins_W2L2_ub', dimension=dimension))
+          data.frame(metric_mean=huggins_mean, metric_sd=huggins_sd, type='huggins_W2L2_ub', dimension=dimension))
   
   print(dimension)
 }

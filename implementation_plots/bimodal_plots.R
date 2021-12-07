@@ -8,7 +8,11 @@ source(file = 'implementation_plots/mvn_mixture_functions.R')
 library(dplyr)
 library(ggplot2)
 library(latex2exp)
-# library(mcmcse)
+library(mcmcse)
+
+# library(dplyr)
+library(doParallel)
+registerDoParallel(cores = detectCores()-1)
 
 # Metric considered: L2
 metric_l2 <- function(x,y){

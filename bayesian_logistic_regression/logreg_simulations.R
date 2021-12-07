@@ -111,33 +111,6 @@ crn_mf_W2L2UBsd <- crn_mf_ADVI$W2L2_UBsd
 mf_W2L2LBmean <- crn_mf_ADVI$W2L2_LBmean
 mf_W2L2LBsd <- crn_mf_ADVI$W2L2_LBsd
 
-# crn_mf_ADVI <- wp_ub_estimate(coupled_chain_ADVI, no_chains=no_chains,
-#                               p=p, metric=metric_l2, parallel=TRUE)
-# crn_mf_traj <- crn_mf_ADVI$wp_power_p_ub_mean_tracjectory
-# crn_mf_W2L2UBmean <- mean(crn_mf_traj[burnin:chain_length])^(1/2)
-# crn_mf_W2L2UBsd <- sd(rowMeans(crn_mf_ADVI$wp_power_p_ub_tracjectories[,burnin:chain_length])^(1/2))
-
-# indep_mf_ADVI_sampler <- function(){
-#   # Starting beta1_init from (approximately) stationarity
-#   # NOTE: can use L-Lag Couplings for principles burn-in guidance
-#   beta1_init <- rnorm(dimension)
-#   beta1_long_run <- mala(beta1_init, targetLogPdf, targetGradLogPdf, sigma_mh, 2e3)
-#   beta1_init <- beta1_long_run[2e3,]
-#   beta1_chain <- mala(beta1_init, targetLogPdf, targetGradLogPdf, sigma_mh, chain_length)
-#   beta2_init <- mvtnorm::rmvnorm(1, mean=mu_ADVI, sigma=sigma_ADVI)[1,]
-#   beta2_chain <- mala(beta2_init, mvnLogPdf, mvnGradLogPdf, sigma_mh, chain_length)
-#   return(list('P'=beta1_chain, 'Q'=beta2_chain))
-# }
-# indep_mf_ADVI_output <- 
-#   wp_ub_estimate(indep_mf_ADVI_sampler, no_chains = no_chains, p=2, metric = metric_l2)
-# indep_traj <- indep_mf_ADVI_output$wp_power_p_ub_mean_tracjectory
-# # metric_l2(crn_exact_skinny_chain$exact, crn_exact_skinny_chain$skinny)
-# indep_mf_W2L2UBmean <- mean(indep_traj[burnin:chain_length])^(1/2)
-# indep_mf_W2L2UBsd <- sd(rowMeans(indep_mf_ADVI_output$wp_power_p_ub_tracjectories[,burnin:chain_length])^(1/2))
-
-# mf_W2L2_lbs <- w2l2_lb_estimate(indep_mf_ADVI_sampler, no_chains = no_chains)
-# mf_W2L2LBmean <- mean(mf_W2L2_lbs$w2l2_lbs)
-# mf_W2L2LBsd <- sd(mf_W2L2_lbs$w2l2_lbs)
 
 ################ Laplace Approximation ################
 logreg_laplace <- optim(rep(0,dimension), method='BFGS', targetLogPdf, control = list(fnscale=-1), hessian = TRUE)
@@ -165,36 +138,6 @@ laplace_W2L2LBmean <- crn_laplace$W2L2_LBmean
 laplace_W2L2LBsd <- crn_laplace$W2L2_LBsd
 
 
-
-
-
-# crn_laplace <- wp_ub_estimate(coupled_chain_laplace, no_chains=no_chains,
-#                               p=p, metric=metric_l2, parallel=TRUE)
-# crn_laplace_traj <- crn_laplace$wp_power_p_ub_mean_tracjectory
-# crn_laplace_W2L2UBmean <- mean(crn_laplace_traj[burnin:chain_length])^(1/2)
-# crn_laplace_W2L2UBsd <- sd(rowMeans(crn_laplace$wp_power_p_ub_tracjectories[,burnin:chain_length])^(1/2))
-# 
-# indep_laplace_sampler <- function(){
-#   # Starting beta1_init from (approximately) stationarity
-#   # NOTE: can use L-Lag Couplings for principles burn-in guidance
-#   beta1_init <- rnorm(dimension)
-#   beta1_long_run <- mala(beta1_init, targetLogPdf, targetGradLogPdf, sigma_mh, 2e3)
-#   beta1_init <- beta1_long_run[2e3,]
-#   beta1_chain <- mala(beta1_init, targetLogPdf, targetGradLogPdf, sigma_mh, chain_length)
-#   beta2_init <- mvtnorm::rmvnorm(1, mean=mu_ADVI, sigma=sigma_ADVI)[1,]
-#   beta2_chain <- mala(beta2_init, mvnLogPdf, mvnGradLogPdf, sigma_mh, chain_length)
-#   return(list('P'=beta1_chain, 'Q'=beta2_chain))
-# }
-# indep_laplace_output <- 
-#   wp_ub_estimate(indep_laplace_sampler, no_chains = no_chains, p=2, metric = metric_l2)
-# indep_traj <- indep_laplace_output$wp_power_p_ub_mean_tracjectory
-# indep_laplace_W2L2UBmean <- mean(indep_traj[burnin:chain_length])^(1/2)
-# indep_laplace_W2L2UBsd <- sd(rowMeans(indep_laplace_output$wp_power_p_ub_tracjectories[,burnin:chain_length])^(1/2))
-# 
-# laplace_W2L2_lbs <- w2l2_lb_estimate(indep_laplace_sampler, no_chains = no_chains)
-# laplace_W2L2LBmean <- mean(laplace_W2L2_lbs$w2l2_lbs)
-# laplace_W2L2LBsd <- sd(laplace_W2L2_lbs$w2l2_lbs)
-
 ################ SGLD 0.1 ################
 subsample_ratio <- 0.1
 coupled_chain_sgld0.1 <- function(){
@@ -220,34 +163,6 @@ crn_sgld0.1_W2L2UBsd <- crn_sgld0.1$W2L2_UBsd
 sgld0.1_W2L2LBmean <- crn_sgld0.1$W2L2_LBmean
 sgld0.1_W2L2LBsd <- crn_sgld0.1$W2L2_LBsd
 
-# crn_sgld0.1 <- wp_ub_estimate(coupled_chain_sgld0.1, no_chains=no_chains, p=p,
-#                               metric=metric_l2, parallel=TRUE)
-# crn_sgld0.1_traj <- crn_sgld0.1$wp_power_p_ub_mean_tracjectory
-# crn_sgld0.1_W2L2UBmean <- mean(crn_sgld0.1_traj[burnin:chain_length])^(1/2)
-# crn_sgld0.1_W2L2UBsd <- sd(rowMeans(crn_sgld0.1$wp_power_p_ub_tracjectories[,burnin:chain_length])^(1/2))
-# 
-# indep_sgld0.1_sampler <- function(){
-#   # Starting beta1_init from (approximately) stationarity
-#   # NOTE: can use L-Lag Couplings for principles burn-in guidance
-#   beta1_init <- rnorm(dimension)
-#   beta1_long_run <- mala(beta1_init, targetLogPdf, targetGradLogPdf, sigma_mh, 2e3)
-#   beta1_init <- beta1_long_run[2e3,]
-#   beta1_chain <- mala(beta1_init, targetLogPdf, targetGradLogPdf, sigma_mh, chain_length)
-#   beta2_init <- rnorm(dimension)
-#   beta2_long_run <- ula(beta2_init, approxTargetGradLogPdf, sigma_mh, 2e3)
-#   beta2_init <- beta2_long_run[2e3,]
-#   beta2_chain <- ula(beta2_init, approxTargetGradLogPdf, sigma_mh, chain_length)
-#   return(list('P'=beta1_chain, 'Q'=beta2_chain))
-# }
-# indep_sgld0.1_output <- 
-#   wp_ub_estimate(indep_sgld0.1_sampler, no_chains = no_chains, p=2, metric = metric_l2)
-# indep_traj <- indep_sgld0.1_output$wp_power_p_ub_mean_tracjectory
-# indep_sgld0.1_W2L2UBmean <- mean(indep_traj[burnin:chain_length])^(1/2)
-# indep_sgld0.1_W2L2UBsd <- sd(rowMeans(indep_sgld0.1_output$wp_power_p_ub_tracjectories[,burnin:chain_length])^(1/2))
-# 
-# sgld0.1_W2L2_lbs <- w2l2_lb_estimate(indep_sgld0.1_sampler, no_chains = no_chains)
-# sgld0.1_W2L2LBmean <- mean(sgld0.1_W2L2_lbs$w2l2_lbs)
-# sgld0.1_W2L2LBsd <- sd(sgld0.1_W2L2_lbs$w2l2_lbs)
 
 ################ SGLD 0.5 ################
 subsample_ratio <- 0.5
@@ -275,38 +190,6 @@ sgld0.5_W2L2LBmean <- crn_sgld0.5$W2L2_LBmean
 sgld0.5_W2L2LBsd <- crn_sgld0.5$W2L2_LBsd
 
 
-# crn_sgld0.5 <- wp_ub_estimate(coupled_chain_sgld0.5, no_chains=no_chains, p=p,
-#                               metric=metric_l2, parallel=TRUE)
-# crn_sgld0.5_traj <- crn_sgld0.5$wp_power_p_ub_mean_tracjectory
-# crn_sgld0.5_W2L2UBmean <- mean(crn_sgld0.5_traj[burnin:chain_length])^(1/2)
-# crn_sgld0.5_W2L2UBsd <- 
-#   sd(rowMeans(crn_sgld0.5$wp_power_p_ub_tracjectories[,burnin:chain_length])^(1/2))
-# 
-# indep_sgld0.5_sampler <- function(){
-#   # Starting beta1_init from (approximately) stationarity
-#   # NOTE: can use L-Lag Couplings for principles burn-in guidance
-#   beta1_init <- rnorm(dimension)
-#   beta1_long_run <- mala(beta1_init, targetLogPdf, targetGradLogPdf, sigma_mh, 2e3)
-#   beta1_init <- beta1_long_run[2e3,]
-#   beta1_chain <- mala(beta1_init, targetLogPdf, targetGradLogPdf, sigma_mh, chain_length)
-#   beta2_init <- rnorm(dimension)
-#   beta2_long_run <- ula(beta2_init, approxTargetGradLogPdf, sigma_mh, 2e3)
-#   beta2_init <- beta2_long_run[2e3,]
-#   beta2_chain <- ula(beta2_init, approxTargetGradLogPdf, sigma_mh, chain_length)
-#   return(list('P'=beta1_chain, 'Q'=beta2_chain))
-# }
-# indep_sgld0.5_output <- 
-#   wp_ub_estimate(indep_sgld0.5_sampler, no_chains = no_chains, p=2, metric = metric_l2)
-# indep_traj <- indep_sgld0.5_output$wp_power_p_ub_mean_tracjectory
-# indep_sgld0.5_W2L2UBmean <- mean(indep_traj[burnin:chain_length])^(1/2)
-# indep_sgld0.5_W2L2UBsd <- sd(rowMeans(indep_sgld0.5_output$wp_power_p_ub_tracjectories[,burnin:chain_length])^(1/2))
-# 
-# sgld0.5_W2L2_lbs <- w2l2_lb_estimate(indep_sgld0.5_sampler, no_chains = no_chains)
-# sgld0.5_W2L2LBmean <- mean(sgld0.5_W2L2_lbs$w2l2_lbs)
-# sgld0.5_W2L2LBsd <- sd(sgld0.5_W2L2_lbs$w2l2_lbs)
-
-
-
 ################ ULA ################
 coupled_chain_ula <- function(){
   # Starting beta1_init from (approximately) stationarity
@@ -330,36 +213,6 @@ crn_ula_W2L2UBmean <- crn_ula$W2L2_UBmean
 crn_ula_W2L2UBsd <- crn_ula$W2L2_UBsd
 ula_W2L2LBmean <- crn_ula$W2L2_LBmean
 ula_W2L2LBsd <- crn_ula$W2L2_LBsd
-
-
-# crn_ula <- wp_ub_estimate(coupled_chain_ula, no_chains=no_chains, 
-#                           p=p, metric=metric_l2, parallel=TRUE)
-# crn_ula_traj <- crn_ula$wp_power_p_ub_mean_tracjectory
-# crn_ula_W2L2UBmean <- mean(crn_ula_traj[burnin:chain_length])^(1/2)
-# crn_ula_W2L2UBsd <- sd(rowMeans(crn_ula$wp_power_p_ub_tracjectories[,burnin:chain_length])^(1/2))
-# 
-# indep_ula_sampler <- function(){
-#   # Starting beta1_init from (approximately) stationarity
-#   # NOTE: can use L-Lag Couplings for principles burn-in guidance
-#   beta1_init <- rnorm(dimension)
-#   beta1_long_run <- mala(beta1_init, targetLogPdf, targetGradLogPdf, sigma_mh, 2e3)
-#   beta1_init <- beta1_long_run[2e3,]
-#   beta1_chain <- mala(beta1_init, targetLogPdf, targetGradLogPdf, sigma_mh, chain_length)
-#   beta2_init <- rnorm(dimension)
-#   beta2_long_run <- ula(beta2_init, targetGradLogPdf, sigma_mh, 2e3)
-#   beta2_init <- beta2_long_run[2e3,]
-#   beta2_chain <- ula(beta2_init, targetGradLogPdf, sigma_mh, chain_length)
-#   return(list('P'=beta1_chain, 'Q'=beta2_chain))
-# }
-# indep_ula_output <- 
-#   wp_ub_estimate(indep_ula_sampler, no_chains = no_chains, p=2, metric = metric_l2)
-# indep_traj <- indep_ula_output$wp_power_p_ub_mean_tracjectory
-# indep_ula_W2L2UBmean <- mean(indep_traj[burnin:chain_length])^(1/2)
-# indep_ula_W2L2UBsd <- sd(rowMeans(indep_ula_output$wp_power_p_ub_tracjectories[,burnin:chain_length])^(1/2))
-# 
-# ula_W2L2_lbs <- w2l2_lb_estimate(indep_ula_sampler, no_chains = no_chains)
-# ula_W2L2LBmean <- mean(ula_W2L2_lbs$w2l2_lbs)
-# ula_W2L2LBsd <- sd(ula_W2L2_lbs$w2l2_lbs)
 
 
 ################ Saving simulated data NEW ################
@@ -389,56 +242,6 @@ bounds_df <-
 
 
 
-
-
-# ################ Saving simulated data ################
-# # Trajectories
-# trajectory <-
-#   rbind(data.frame(t=c(1:chain_length), dataset=dataset, n=n, dimension=dimension, type='mf_advi',
-#                    stepsize=sigma_mh, metric=(crn_mf_ADVI$wp_power_p_ub_mean_tracjectory)),
-#         data.frame(t=c(1:chain_length), dataset=dataset, n=n, dimension=dimension, type='laplace', 
-#                    stepsize=sigma_mh, metric=(crn_laplace$wp_power_p_ub_mean_tracjectory)),
-#         data.frame(t=c(1:chain_length), dataset=dataset,  n=n, dimension=dimension, type='sgld0.1',
-#                    stepsize=sigma_mh, metric=(crn_sgld0.1$wp_power_p_ub_mean_tracjectory)),
-#         data.frame(t=c(1:chain_length), dataset=dataset, n=n, dimension=dimension, type='sgld0.5',
-#                    stepsize=sigma_mh, metric=(crn_sgld0.5$wp_power_p_ub_mean_tracjectory)),
-#         data.frame(t=c(1:chain_length), dataset=dataset, n=n, dimension=dimension, type='ula', 
-#                    stepsize=sigma_mh, metric=(crn_ula$wp_power_p_ub_mean_tracjectory)))
-# 
-# # Marginal errors
-# mala_long_run <- mala(rnorm(dimension), targetLogPdf, targetGradLogPdf, sigma_mh, 1e4)
-# mu_mala <- colMeans(mala_long_run[c(5e3:1e4),])
-# sigma_mala <- cov(mala_long_run[c(5e3:1e4),])
-# 
-# marginal_errors <-
-#   data.frame('approx'=c("mf_advi", "laplace", "sgld0.1", "sgld0.5", "ula"),
-#              dataset=dataset,
-#              'relaive_cov_error'=
-#                c(norm(solve(sigma_mala)%*%sigma_ADVI-diag(dimension), type = '2'),
-#                  norm(solve(sigma_mala)%*%sigma_laplace-diag(dimension), type = '2'),
-#                  norm(solve(sigma_mala)%*%sigma_sgld0.1-diag(dimension), type = '2'),
-#                  norm(solve(sigma_mala)%*%sigma_sgld0.5-diag(dimension), type = '2'),
-#                  norm(solve(sigma_mala)%*%sigma_ula-diag(dimension), type = '2')),
-#              'cov_error'=
-#                c(norm(solve(sigma_mala)-sigma_ADVI, type = '2'),
-#                  norm(solve(sigma_mala)-sigma_laplace, type = '2'),
-#                  norm(solve(sigma_mala)-sigma_sgld0.1, type = '2'),
-#                  norm(solve(sigma_mala)-sigma_sgld0.5, type = '2'),
-#                  norm(solve(sigma_mala)-sigma_ula, type = '2')),
-#              'W2L2UB'=
-#                c(crn_mf_ADVI$wp_ub,crn_laplace$wp_ub, crn_sgld0.1$wp_ub,
-#                  crn_sgld0.5$wp_ub, crn_ula$wp_ub),
-#              'W2L2LB'=
-#                c(W2L2mvns(mu_mala, mu_ADVI, sigma_mala, sigma_ADVI),
-#                  W2L2mvns(mu_mala, mu_laplace, sigma_mala, sigma_laplace),
-#                  W2L2mvns(mu_mala, mu_sgld0.1, sigma_mala, sigma_sgld0.1),
-#                  W2L2mvns(mu_mala, mu_sgld0.5, sigma_mala, sigma_sgld0.5),
-#                  W2L2mvns(mu_mala, mu_ula, sigma_mala, sigma_ula)))
-# 
-# logreg_df <- list(trajectory = trajectory, marginal_errors = marginal_errors)
-# 
-# # filename <- paste("bayesian_logistic_regression/logreg_trajectory_df_",dataset,".RData",sep="")
-# # save(logreg_df, file=filename)
 
 
 

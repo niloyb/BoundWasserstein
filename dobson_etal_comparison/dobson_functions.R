@@ -163,34 +163,6 @@ for (dimension in seq(220,300,20)){
                      metric_mean=mean(dobson_ub$mean), metric_sd=sd(dobson_ub$sd),
                      type='dobson'))
   
-  
-  # # Analytic bound of Durmus and Moulines
-  # bias_ub_analytic_mean <- ula_w2_analytic_bound_bias(cov_mat, sigma_mh)^2
-  # bias_ub_analytic_sd <- 0
-  # trajectory_bias_dimension_df_ula_mala <- 
-  #   rbind(trajectory_bias_dimension_df_ula_mala, 
-  #         data.frame(dimension=dimension, sigma_mh=sigma_mh, sigma_mh_ratio=sigma_mh_ratio, 
-  #                    metric_mean=bias_ub_analytic_mean, metric_sd=bias_ub_analytic_sd,
-  #                    type='analytic'))
-  # 
-  # # True W2L2 bias ULA
-  # true_w2_bias_mean <- ula_w2_bias(cov_mat, sigma_mh)^2
-  # true_w2_bias_sd <- 0
-  # trajectory_bias_dimension_df_ula_mala <- 
-  #   rbind(trajectory_bias_dimension_df_ula_mala, 
-  #         data.frame(dimension=dimension, sigma_mh=sigma_mh, sigma_mh_ratio=sigma_mh_ratio,
-  #                    metric_mean=true_w2_bias_mean, metric_sd=true_w2_bias_sd,
-  #                    type='true_w2'))
-  
-  # # Independent coupling bias of ULA
-  # indep_w2_bias_mean <- indep_coupling_w2_bias(cov_mat, sigma_mh)^2
-  # indep_w2_bias_sd <- 0
-  # trajectory_bias_dimension_df_ula_mala <- 
-  #   rbind(trajectory_bias_dimension_df_ula_mala, 
-  #         data.frame(dimension=dimension, sigma_mh=sigma_mh, sigma_mh_ratio=sigma_mh_ratio,
-  #                    metric_mean=indep_w2_bias_mean, metric_sd=indep_w2_bias_sd, 
-  #                    type='indep_coupling'))
-  
   print(c(dimension))
 }
 

@@ -4,34 +4,8 @@ require(Rcpp)
 require(RcppEigen)
 
 #### Wp upper bounds ####
-# wp_ub_estimate <- 
-#   function(coupled_chain_sampler, no_chains, p=1, metric, parallel=TRUE){
-#     if(parallel){
-#       trajectories <- foreach(i = c(1:no_chains), .combine = rbind)%dopar%{
-#         chain <- coupled_chain_sampler()
-#         return(metric(chain$Q, chain$P))
-#       }
-#     } else {
-#       trajectories <- foreach(i = c(1:no_chains), .combine = rbind)%do%{
-#         chain <- coupled_chain_sampler()
-#         print(i)
-#         return(metric(chain$Q, chain$P))
-#       }
-#     }
-#     
-#     if(no_chains==1){
-#       wp_power_p_ub_mean_tracjectory <- trajectories^p
-#     } else{
-#       wp_power_p_ub_mean_tracjectory <- colMeans(trajectories^p)
-#     }
-#     wp_power_p_ub <- mean(wp_power_p_ub_mean_tracjectory)
-#     return(list('wp_power_p_ub_tracjectories' = trajectories^p,
-#                 'wp_power_p_ub_mean_tracjectory' = wp_power_p_ub_mean_tracjectory,
-#                 'wp_power_p_ub'=wp_power_p_ub, 'wp_ub'=wp_power_p_ub^(1/p)))
-#   }
-
 wp_ub_estimate <- 
-  function(coupled_chain_sampler, no_chains, p=1, metric, parallel=TRUE, boot_sample=1000){
+  function(coupled_chain_sampler, no_chains, p=1, metric, parallel=TRUE){
     if(parallel){
       trajectories <- foreach(i = c(1:no_chains), .combine = rbind)%dopar%{
         chain <- coupled_chain_sampler()
@@ -50,13 +24,17 @@ wp_ub_estimate <-
       wp_ub_se <- NA
     } else{
       wp_power_p_ub_mean_tracjectory <- colMeans(trajectories^p)
-      if(p==1){
-        wp_ub_se <- sd(rowMeans(trajectories))
-      } else{
-        wpub_fc <- function(trajectories, i){return(mean(trajectories[i,]^p)^(1/p))}
-        boot_ub <- boot::boot(trajectories, wpub_fc, R=boot_sample)
-        wp_ub_se <- sd(boot_ub$t)
-      }
+      
+      wp_power_p_ubs <- rowMeans(trajectories^p)
+      wp_ub_se <- (sd(wp_power_p_ubs)/sqrt(no_chains))^(1/p)
+      
+      # if(p==1){
+      #   wp_ub_se <- sd(rowMeans(trajectories))
+      # } else{
+      #   wpub_fc <- function(trajectories, i){return(mean(trajectories[i,]^p)^(1/p))}
+      #   boot_ub <- boot::boot(trajectories, wpub_fc, R=boot_sample)
+      #   wp_ub_se <- sd(boot_ub$t)
+      # }
     }
     wp_power_p_ub <- mean(wp_power_p_ub_mean_tracjectory)
     
@@ -130,7 +108,7 @@ metric_l2 <- function(x,y){
   if(is.null(dim(x))){return(sum((x-y)^2)^0.5)} else {return(rowSums((x-y)^2)^0.5)}
 }
 W2L2_UBLB_estimates <- 
-  function(chain_sampler, no_chains, parallel=TRUE, lb='max_gelbrich_marginals', boot_sample=1000){
+  function(chain_sampler, no_chains, parallel=TRUE, lb='max_gelbrich_marginals'){
     if(parallel){
       output <- foreach(i = c(1:no_chains), .combine = rbind)%dopar%{
         chain <- chain_sampler()
@@ -163,45 +141,32 @@ W2L2_UBLB_estimates <-
       }
     }
     
-    # if(no_chains==1){
-    #   trajectories <- output$metric_l2_traj
-    #   W2L2_UBs <- mean(trajectories^2)^0.5
-    #   W2L2_LBs <- max(output$lb_gelbrich, output$lb_marginals, na.rm = TRUE)
-    # } else {
-    #   trajectories <- do.call(rbind, output[,"metric_l2_traj"])
-    #   W2L2_UBs <- rowMeans(trajectories^2)^0.5
-    #   W2L2_LBs <- pmax(do.call(rbind, output[,"lb_gelbrich"]), 
-    #                    do.call(rbind, output[,"lb_marginals"]), na.rm = TRUE)
-    # }
-    # 
-    # return(list(W2L2_UBs=W2L2_UBs,'W2L2_UBmean'=mean(W2L2_UBs),'W2L2_UBsd'=sd(W2L2_UBs),
-    #             W2L2_LBs=W2L2_LBs,'W2L2_LBmean'=mean(W2L2_LBs),'W2L2_LBsd'=sd(W2L2_LBs)))
-    
     if(no_chains==1){
       trajectories <- output$metric_l2_traj
-      W2L2_UBmean <- mean(trajectories^2)^0.5
+      W2L2_UBs <- mean(trajectories^2)^0.5
+      W2L2_UBmean <- W2L2_UBs
       W2L2_UBsd <- NA
-      W2L2_LBmean <- max(output$lb_gelbrich, output$lb_marginals, na.rm = TRUE)
+      
+      W2L2_LBs <- max(output$lb_gelbrich, output$lb_marginals, na.rm = TRUE)
+      W2L2_LBmean <- W2L2_LBs
       W2L2_LBsd <- NA
     } else {
       trajectories <- do.call(rbind, output[,"metric_l2_traj"])
-      W2L2_UBmean <- mean(trajectories^2)^0.5
-      W2UB_fc <- function(trajectories, i){return(mean(trajectories[i,]^2)^(1/2))}
-      boot_ub <- boot::boot(trajectories, W2UB_fc, R=boot_sample)
-      W2L2_UBsd <- sd(boot_ub$t)
+      W2L2_squared_UBs <- rowMeans(trajectories^2)
+      W2L2_UBs <- W2L2_squared_UBs^0.5
+      W2L2_UBmean <- mean(W2L2_squared_UBs)^0.5
+      W2L2_UBsd <- (sd(W2L2_squared_UBs)/sqrt(no_chains))^0.5
       
-      W2L2_LBs <- pmax(do.call(rbind, output[,"lb_gelbrich"]), 
-                       do.call(rbind, output[,"lb_marginals"]), na.rm = TRUE)
-      W2L2_LBmean <- mean(W2L2_LBs^2)^0.5
-      
-      W2LB_fc <- function(W2L2_LBs, i){return(mean(W2L2_LBs[i]^2)^(1/2))}
-      boot_lb <- boot::boot(W2L2_LBs, W2LB_fc, R=boot_sample)
-      W2L2_LBsd <- sd(boot_lb$t)
-      
+      W2L2_squared_LBs <- 
+        pmax(do.call(rbind, output[,"lb_gelbrich"]),
+             do.call(rbind, output[,"lb_marginals"]), na.rm = TRUE)^2
+      W2L2_LBs <- W2L2_squared_LBs^0.5
+      W2L2_LBmean <- mean(W2L2_squared_LBs)^0.5
+      W2L2_LBsd <- (sd(W2L2_squared_LBs)/sqrt(no_chains))^0.5
     }
-    
-    return(list('W2L2_UBmean'=W2L2_UBmean,'W2L2_UBsd'=W2L2_UBsd,
-                'W2L2_LBmean'=W2L2_LBmean,'W2L2_LBsd'=W2L2_LBsd))
+
+    return(list(W2L2_UBs=W2L2_UBs,'W2L2_UBmean'=W2L2_UBmean,'W2L2_UBsd'=W2L2_UBsd,
+                W2L2_LBs=W2L2_LBs,'W2L2_LBmean'=W2L2_LBmean,'W2L2_LBsd'=W2L2_LBsd))
   }
 
 

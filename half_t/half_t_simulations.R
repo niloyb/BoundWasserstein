@@ -30,17 +30,6 @@ y <- as.matrix(riboflavin$y)
 n <- dim(X)[1]
 dimension <- dim(X)[2]
 
-
-# # Import Maize data
-# load('/Volumes/GoogleDrive/My Drive/Niloy_Files/Harvard/PhD/Research/Pierre Jacob Lab/misc/high_dim_datasets/processed_maize_data/response_ynew.RData')
-# load('/Volumes/GoogleDrive/My Drive/Niloy_Files/Harvard/PhD/Research/Pierre Jacob Lab/misc/high_dim_datasets/processed_maize_data/design_matrix_Xnew.RData')
-# colnames(X) <- NULL
-# rownames(X) <- NULL
-# X_transpose <- t(X)
-# n <- dim(X)[1]
-# dimension <- dim(X)[2]
-
-
 # # Generate synthetic data
 # n <- 500
 # dimension <- 50000
@@ -55,11 +44,11 @@ dimension <- dim(X)[2]
 # y = X%*%true_beta + error_terms
 
 # Simulation parameters
-no_chains <- 5
+no_chains <- 100
 burnin <- 1e3
-chain_length <- 1e3 + burnin
+chain_length <- 2e3 + burnin
 
-approxMCMCparams <- c(0,0.01,0.001,0.0001)
+approxMCMCparams <- c(0,0.0001,0.001,0.01)
 bounds_df <- data.frame()
 for (epsilon in approxMCMCparams){
   for(t_dist_df in c(2)){
@@ -73,7 +62,7 @@ for (epsilon in approxMCMCparams){
                   'Q'=coupled_chain$beta_samples2[c((burnin+1):chain_length),]))
     }
     crn_bounds <- W2L2_UBLB_estimates(crn_half_t_sampler, no_chains=no_chains,
-                                      lb='marginals', parallel=FALSE)
+                                      lb='marginals', parallel=TRUE)
     bounds_df <-
       rbind(bounds_df,
             data.frame(n=n, dimension=dimension, approxMCMCparam=epsilon, t_dist_df=t_dist_df,
@@ -84,5 +73,5 @@ for (epsilon in approxMCMCparams){
   }
 }
 
+# save(bounds_df, file="half_t/half_t_bounds_df_riboflavin.RData")
 # save(bounds_df, file="half_t/half_t_bounds_df_synthetic.RData")
-

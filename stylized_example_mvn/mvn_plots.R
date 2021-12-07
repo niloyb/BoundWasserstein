@@ -45,7 +45,7 @@ coupled_chain_sampler_mala <-
     return(coupled_mala(SamplerQ(1),SamplerP(1), LogPdfQ,LogPdfP,
                  GradLogPdfQ, GradLogPdfP, sigma_mh, chain_length))
   }
-no_chains <- 5
+no_chains <- 10
 crn_mala <- wp_ub_estimate(coupled_chain_sampler_mala, no_chains=no_chains,
                            p=p, metric=metric_l2, parallel=FALSE)
 rownames(crn_mala$wp_power_p_ub_tracjectories) <- c(1:no_chains)
@@ -58,23 +58,14 @@ single_ergodic_trajectory_df <-
   dplyr::rename(trajectory=variable) %>%
   dplyr::mutate(type='single_ergodic', trajectory=as.integer(trajectory))
 
-boot_b <- 100
-boot_sd_test <- function(metric_power_p){
-  wpub_fc <- function(metric_power_p, i){
-    return(mean(metric_power_p[i])^(1/p))
-  }
-  boot_ub <- boot(metric_power_p, wpub_fc, R=boot_b)
-  return(sd(boot_ub$t))
-}
-
 # Trajectory means and sds
 d_coupling <- single_ergodic_trajectory_df %>% 
   dplyr::filter(type=='single_ergodic') %>%
   dplyr::group_by(t) %>%
-  dplyr::summarise(metric_mean=mean(metric_power_p)^(1/p), metric_sd=boot_sd_test(metric_power_p))
+  dplyr::summarise(metric_mean=mean(metric_power_p)^(1/p), metric_sd=(sd(metric_power_p)/sqrt(no_chains))^(1/p))
 trajectory_df <- 
   data.frame(t=c(1:chain_length), metric_mean=d_coupling$metric_mean,
-             metric_sd=d_coupling$metric_sd/sqrt(no_chains), type='averaged_ergodic', 
+             metric_sd=d_coupling$metric_sd, type='averaged_ergodic', 
              no_chains=no_chains)
 
 
@@ -86,12 +77,12 @@ for (i in c(1:no_chains)){
   Q_samples <- pp(Q_samples)
   P_samples <- t(SamplerP(chain_length))
   P_samples <- pp(P_samples)
-  empirical_w2_power_p[i] <- transport::wasserstein(Q_samples, P_samples, p=p)
+  empirical_w2_power_p[i] <- transport::wasserstein(Q_samples, P_samples, p=p)^p
 }
 trajectory_df <- 
   rbind(trajectory_df, 
-        data.frame(t=c(1:chain_length), metric_mean=mean(empirical_w2_power_p),
-                   metric_sd=sd(empirical_w2_power_p)/sqrt(no_chains), type='linear_program',
+        data.frame(t=c(1:chain_length), metric_mean=(mean(empirical_w2_power_p))^(1/p),
+                   metric_sd=(sd(empirical_w2_power_p)/sqrt(no_chains))^(1/p), type='linear_program',
                    no_chains=no_chains))
 
 # Independent coupling
@@ -133,10 +124,7 @@ mvn_plot <-
                         breaks = c("indep_coupling", "averaged_ergodic", "linear_program", "true_w2"),
                         labels=unname(TeX(c('Indep. Coupling', 'CUB_2', 'Empirical W_2', 'True $W_2$'))),
                         values = c('dotted', 'solid', 'dotdash', 'dashed')) +
-  #scale_linetype_discrete(guide = "none") +
-  #scale_linetype_manual(breaks = c("coupling", "coupling_averaged", "linear_program", "indep_coupling"))+
-  scale_x_continuous(breaks=seq(0,2e3,250), limits = c(0,1000)) +
-  # scale_y_continuous(limits = c(0,16)) +
+  scale_y_continuous(limits = c(0,18)) +
   theme_classic(base_size = 12) + 
   theme(legend.position = 'bottom', legend.key.width=unit(1.25,"cm")) +
   guides(linetype=guide_legend(nrow=2,byrow=TRUE))
@@ -147,9 +135,9 @@ mvn_plot
 ################################################################################
 # Plot 2: W2 varying dimension
 alpha <- 0.5
-no_chains <- 10
-chain_length <- 1500
-burnin <- 500
+no_chains <- 5
+chain_length <- 1000
+burnin <- 0
 trajectory_dimension_df <- data.frame()
 for (dimension in seq(200,1000,200)){
   sigma_mh <- 0.5*(dimension^(-1/6))
@@ -164,7 +152,7 @@ for (dimension in seq(200,1000,200)){
                           burnin))
     }
   crn_mala <- wp_ub_estimate(coupled_chain_sampler_mala, no_chains=no_chains,
-                             p=2, metric=metric_l2, parallel=TRUE)
+                             p=2, metric=metric_l2, parallel=FALSE)
   
   crn_coupling_ub_mean <- crn_mala$wp_ub # mean(rowMeans(crn_mala$wp_power_p_ub_tracjectories))
   crn_coupling_ub_sd <- crn_mala$wp_ub_se # sd(rowMeans(crn_mala$wp_power_p_ub_tracjectories))
@@ -176,10 +164,10 @@ for (dimension in seq(200,1000,200)){
     Q_samples <- pp(Q_samples)
     P_samples <- t(SamplerP(chain_length))
     P_samples <- pp(P_samples)
-    empirical_w2_power_p[i] <- transport::wasserstein(Q_samples, P_samples, p=p)
+    empirical_w2_power_p[i] <- transport::wasserstein(Q_samples, P_samples, p=p)^p
   }
-  linear_program_mean = mean(empirical_w2_power_p)
-  linear_program_sd = sd(empirical_w2_power_p)
+  linear_program_mean = mean(empirical_w2_power_p)^(1/p)
+  linear_program_sd = (sd(empirical_w2_power_p)/sqrt(no_chains))^(1/p)
   
   indep_coupling_mean <- (2*dimension)^(1/p)
   indep_coupling_sd <- 0
@@ -207,8 +195,8 @@ mvn_plot_dim <-
                         labels=unname(TeX(c('Indep. Coupling','CUB_2', 
                                             'Empirical $W_2$', 'True $W_2$'))),
                         values = c('dotted', 'solid', 'dotdash', 'dashed')) +
-  geom_ribbon(aes(ymin=metric_mean-metric_sd/sqrt(no_chains),
-                  ymax=metric_mean+metric_sd/sqrt(no_chains)), alpha=0.2, colour = NA) +
+  geom_ribbon(aes(ymin=metric_mean-metric_sd,
+                  ymax=metric_mean+metric_sd), alpha=0.2, colour = NA) +
   # values = c(RColorBrewer::brewer.pal(5,name = 'Greys'))) +
   scale_x_continuous(breaks=seq(0,2e3,200)) +
   scale_y_continuous(limits = c(0,50)) +
