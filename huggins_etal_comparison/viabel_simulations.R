@@ -117,8 +117,7 @@ mvn_plot_dim <-
                         labels=unname(TeX(c('Indep. Coupling','CUB_2', 
                                             'Huggins et al.', 'True $W_2$'))),
                         values = c('dotted', 'solid', 'dotdash', 'dashed', 'longdash')) +
-  geom_ribbon(aes(ymin=metric_mean-metric_sd/sqrt(no_chains),
-                  ymax=metric_mean+metric_sd/sqrt(no_chains)), alpha=0.2, colour = NA) +
+  geom_ribbon(aes(ymin=metric_mean-metric_sd, ymax=metric_mean+metric_sd), alpha=0.2, colour = NA) +
   # values = c(RColorBrewer::brewer.pal(5,name = 'Greys'))) +
   # scale_x_continuous(breaks=seq(0,2e3,200)) +
   # scale_y_continuous(limits = c(1,2100), trans = 'log10') +

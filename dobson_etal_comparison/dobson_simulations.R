@@ -124,7 +124,7 @@ omega_set <- c(-4,4)
 epsilon <- 1/no_chains
 
 trajectory_bias_dimension_df_ula_mala <- data.frame()
-for (dimension in seq(220,300,20)){
+for (dimension in seq(20,300,20)){
   # Covariance matrix
   cov_mat <- cov_matrix(alpha, dimension)
   cov_mat_sqrt <- t(chol(cov_mat))

@@ -9,7 +9,7 @@ library(latex2exp)
 #setwd('Dropbox/Apps/Overleaf/couplings/code/paper_examples/')
 load("bayesian_logistic_regression/logreg_bounds_df_pima.RData")
 logreg_df_pima <- bounds_df
-load("bayesian_logistic_regression/logreg_bounds_df2_ds1.RData")
+load("bayesian_logistic_regression/logreg_bounds_df_ds1.RData")
 logreg_df_ds1 <- bounds_df
 
 # Pima Wassertein Bounds plot
@@ -22,13 +22,11 @@ plot.labels <- unname(TeX(c("Mean Field VB", "Laplace", 'SGLD 10%','SGLD 50%','U
 plot.name <- TeX('Approx.')
 pima_bounds_plot <- 
   ggplot(logreg_df_pima, aes(x=as.factor(type), y=W2L2UBmean)) + 
-  geom_crossbar(aes(ymin=W2L2UBmean-W2L2UBsd/sqrt(no_chains), 
-                    ymax=W2L2UBmean+W2L2UBsd/sqrt(no_chains)), 
+  geom_crossbar(aes(ymin=W2L2UBmean-W2L2UBsd, ymax=W2L2UBmean+W2L2UBsd), 
                 # width=10, 
                 color='grey', fill='grey',
                 position=position_dodge(.9)) +
-  geom_crossbar(aes(ymin=W2L2LBmean-W2L2LBsd/sqrt(no_chains), 
-                    ymax=W2L2LBmean+W2L2LBsd/sqrt(no_chains)), 
+  geom_crossbar(aes(ymin=W2L2LBmean-W2L2LBsd, ymax=W2L2LBmean+W2L2LBsd), 
                 # width=10, 
                 color='grey', fill='grey',
                 position=position_dodge(.9)) +
@@ -53,13 +51,11 @@ plot.labels <- unname(TeX(c("Mean Field VB", "Laplace", 'SGLD 10%','SGLD 50%','U
 plot.name <- TeX('Approx.')
 ds1_bounds_plot <- 
   ggplot(logreg_df_ds1, aes(x=as.factor(type), y=W2L2UBmean)) + 
-  geom_crossbar(aes(ymin=W2L2UBmean-W2L2UBsd/sqrt(no_chains), 
-                    ymax=W2L2UBmean+W2L2UBsd/sqrt(no_chains)), 
+  geom_crossbar(aes(ymin=W2L2UBmean-W2L2UBsd, ymax=W2L2UBmean+W2L2UBsd), 
                 # width=10, 
                 color='grey', fill='grey',
                 position=position_dodge(.9)) +
-  geom_crossbar(aes(ymin=W2L2LBmean-W2L2LBsd/sqrt(no_chains), 
-                    ymax=W2L2LBmean+W2L2LBsd/sqrt(no_chains)), 
+  geom_crossbar(aes(ymin=W2L2LBmean-W2L2LBsd, ymax=W2L2LBmean+W2L2LBsd), 
                 # width=10, 
                 color='grey', fill='grey',
                 position=position_dodge(.9)) +
@@ -77,25 +73,28 @@ ds1_bounds_plot
 
 # Combined plot
 logreg_df_combined <- rbind(logreg_df_pima, logreg_df_ds1)
+ylabel <- expression(
+  atop(`Top Label^2` = paste("W", phantom()[{paste("2")}], " upper and lower"),
+       `Bottom Label_{sub}` = paste("bounds")))
+
 combined_ub_lb_plot <- 
   ggplot(logreg_df_combined, aes(x=as.factor(type), y=W2L2UBmean)) + 
-  geom_crossbar(aes(x=as.factor(type), ymin=W2L2UBmean-W2L2UBsd/sqrt(no_chains), 
-                    ymax=W2L2UBmean-W2L2UBsd/sqrt(no_chains),group=as.factor(dataset)), 
+  geom_crossbar(aes(x=as.factor(type), ymin=W2L2UBmean-W2L2UBsd, 
+                    ymax=W2L2UBmean+W2L2UBsd,group=as.factor(dataset)), 
                 fill='grey', color='gray', position=position_dodge(.9)) +
-  geom_crossbar(aes(x=as.factor(type), ymin=W2L2LBmean-W2L2LBsd/sqrt(no_chains), 
-                    ymax=W2L2LBmean-W2L2LBsd/sqrt(no_chains),group=as.factor(dataset)), 
+  geom_crossbar(aes(x=as.factor(type), ymin=W2L2LBmean-W2L2LBsd, 
+                    ymax=W2L2LBmean+W2L2LBsd,group=as.factor(dataset)), 
                 fill='grey', color='gray', position=position_dodge(.9)) +
   geom_errorbar(aes(ymin=W2L2LBmean, ymax=W2L2UBmean, linetype=as.factor(dataset)), 
                 position=position_dodge(.9)) +
   xlab(TeX('Approximate MCMC or variational procedure')) + 
-  ylab(TeX('$W_2$ upper and lower bounds')) +
+  ylab(ylabel) +
   scale_x_discrete(breaks=plot.breaks, labels=plot.labels) +
   # scale_y_continuous(trans = 'log10') +
   scale_y_continuous(limits =c(0,0.3)) +
-  theme_classic(base_size = 14) +
-  theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust=1)) +
+  theme_classic(base_size = 24) +
+  # theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust=1)) +
   guides(linetype=guide_legend("Dataset")) + theme(legend.position = 'right')
 combined_ub_lb_plot
-#ggsave(filename = "/Users/niloybiswas/Dropbox/Apps/Overleaf/couplings/writeup/images/logistic_regression/combined_ub_lb_plot.pdf", plot = combined_ub_lb_plot, width = 6, height = 4)
-
+# ggsave(filename = "/Users/niloybiswas/Dropbox/Apps/Overleaf/couplings/writeup/images/logistic_regression/combined_ub_lb_plot2.pdf", plot = combined_ub_lb_plot, width = 13, height = 4)
 
