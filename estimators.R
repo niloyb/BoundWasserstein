@@ -24,24 +24,14 @@ wp_ub_estimate <-
       wp_ub_se <- NA
     } else{
       wp_power_p_ub_mean_tracjectory <- colMeans(trajectories^p)
-      
       wp_power_p_ubs <- rowMeans(trajectories^p)
-      wp_ub_se <- (sd(wp_power_p_ubs)/sqrt(no_chains))^(1/p)
-      
-      # if(p==1){
-      #   wp_ub_se <- sd(rowMeans(trajectories))
-      # } else{
-      #   wpub_fc <- function(trajectories, i){return(mean(trajectories[i,]^p)^(1/p))}
-      #   boot_ub <- boot::boot(trajectories, wpub_fc, R=boot_sample)
-      #   wp_ub_se <- sd(boot_ub$t)
-      # }
+      wp_power_p_ub_se <- sd(wp_power_p_ubs)/sqrt(no_chains)
     }
     wp_power_p_ub <- mean(wp_power_p_ub_mean_tracjectory)
     
     return(list('wp_power_p_ub_tracjectories' = trajectories^p,
                 'wp_power_p_ub_mean_tracjectory' = wp_power_p_ub_mean_tracjectory,
-                'wp_power_p_ub'=wp_power_p_ub, 'wp_ub'=wp_power_p_ub^(1/p),
-                'wp_ub_se'=wp_ub_se))
+                'wp_power_p_ub_mean'=wp_power_p_ub, 'wp_power_p_ub_se'=wp_power_p_ub_se))
   }
 
 #### 2-Wasserstein with L2 distance lower bound ####
