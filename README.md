@@ -38,6 +38,9 @@ All commands below should be run from this repository base directory.
            pi_stepsize, q_stepsize, pi_nsteps, q_nsteps,
            chain_length, reflect_threshold=0,
            pi_correction=TRUE, q_correction=TRUE)` returns a coupled MALA chain of length chain_length
+- `rcpp_functions.R` contains Rcpp functions for multiplying matrices and vectors
+    - `cpp_mat_vec_prod(const Eigen::MatrixXd X, const Eigen::VectorXd y)` returns the matrix-vector product X*y
+    - `cpp_prod(const Eigen::MatrixXd X, const Eigen::MatrixXd Y)` returns the matrix-matrix product X*Y
 -	`stylized_example_mvn` contains code for Figure 1.
     - To reproduce Figure 1 run `source('stylized_example_mvn/mvn_plots.R')`
 -	`stylized_example_ula_mala` contains code for Figure 2.
