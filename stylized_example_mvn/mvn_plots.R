@@ -15,7 +15,6 @@ library(doParallel)
 registerDoParallel(cores = detectCores()-1)
 
 # Functions
-setwd('/Users/niloybiswas/Google Drive/My Drive/Niloy_Files/github/BoundWasserstein/')
 source('kernels.R')
 source('estimators.R')
 source('rcpp_functions.R')
