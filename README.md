@@ -1,10 +1,17 @@
 # BoundWasserstein
 
-These scripts reproduce the results of the article ***Bounding Wasserstein distance with couplings***  by Niloy Biswas and Lester Mackey. 
+These scripts reproduce the results of the article **[Bounding Wasserstein distance with couplings](https://arxiv.org/abs/2112.03152)**  by Niloy Biswas and Lester Mackey. 
+
+```
+@article{biswas2021bounding,
+  title={Bounding Wasserstein distance with couplings},
+  author={Niloy Biswas and Lester Mackey},
+  journal={arXiv preprint arXiv:2112.03152},
+  year={2021}
+}
+```
+
 All commands below should be run from this repository base directory.
-
-arXiv pre-print: [https://arxiv.org/abs/2112.03152](https://arxiv.org/abs/2112.03152)
-
 -	`stylized_example_mvn` contains code for Figure 1.
     - To reproduce Figure 1 run `source('stylized_example_mvn/mvn_plots.R')`
 -	`stylized_example_ula_mala` contains code for Figure 2.
