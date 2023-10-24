@@ -236,8 +236,8 @@ bounds_df <-
                    no_chains=no_chains, W2L2UBmean=crn_ula_W2L2UBmean, W2L2UBsd=crn_ula_W2L2UBsd,
                    W2L2LBmean=ula_W2L2LBmean, W2L2LBsd=ula_W2L2LBsd))
 
-# filename <- paste("bayesian_logistic_regression/logreg_bounds_df_",dataset,".RData",sep="")
-# save(bounds_df, file=filename)
+filename <- paste("bayesian_logistic_regression/logreg_bounds_df_",dataset,".RData",sep="")
+save(bounds_df, file=filename)
 
 
 
