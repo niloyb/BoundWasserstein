@@ -1,7 +1,7 @@
 rm(list = ls())
-source('../huggins_comparison/viabel_functions.R')
-source('../paper_examples/stylized_example_mvn/mvn_functions.R')
-source('../paper_examples/rcpp_functions.R')
+source('huggins_comparison/viabel_functions.R')
+source('stylized_example_mvn/mvn_functions.R')
+source('rcpp_functions.R')
 
 # Test 1: estimator_is function 
 # remember IS is abysmally useless if target far away from proposal ...
