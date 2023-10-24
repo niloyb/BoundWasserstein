@@ -3,9 +3,9 @@
 # Logistic Regression Wasserstein Distance Plots
 rm(list = ls())
 set.seed(1)
-source(file='/Users/niloybiswas/Dropbox/Apps/Overleaf/couplings/code/paper_examples/bayesian_logistic_regression/logreg_functions.R')
-source(file='/Users/niloybiswas/Dropbox/Apps/Overleaf/couplings/code/paper_examples/kernels.R')
-source(file='/Users/niloybiswas/Dropbox/Apps/Overleaf/couplings/code/paper_examples/rcpp_functions.R')
+source(file='bayesian_logistic_regression/logreg_functions.R')
+source(file='kernels.R')
+source(file='rcpp_functions.R')
 
 
 # Generating data
