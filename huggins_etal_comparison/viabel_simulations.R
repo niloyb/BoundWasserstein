@@ -9,7 +9,6 @@ library(doParallel)
 registerDoParallel(cores = detectCores()-1)
 
 
-setwd('/Users/niloybiswas/Dropbox/Apps/Overleaf/couplings/code/paper_examples/')
 source('kernels.R')
 source('estimators.R')
 source('rcpp_functions.R')
