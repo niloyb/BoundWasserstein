@@ -7,7 +7,6 @@ library(doParallel)
 registerDoParallel(cores = detectCores()-1)
 
 # Importing half-t functions
-setwd('/Users/niloybiswas/Dropbox/Apps/Overleaf/couplings/code/paper_examples/')
 source('half_t/half_t_functions.R')
 source('estimators.R')
 
@@ -73,5 +72,5 @@ for (epsilon in approxMCMCparams){
   }
 }
 
-# save(bounds_df, file="half_t/half_t_bounds_df_riboflavin.RData")
-# save(bounds_df, file="half_t/half_t_bounds_df_synthetic.RData")
+save(bounds_df, file="half_t/half_t_bounds_df_riboflavin.RData")
+save(bounds_df, file="half_t/half_t_bounds_df_synthetic.RData")
