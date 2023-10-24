@@ -1,5 +1,5 @@
 # Wasserstein's distance coupling plots
-# Distance between ULA and MALA targetting a gaussians
+# Distance between ULA and MALA targeting Gaussians
 
 rm(list = ls())
 
@@ -14,7 +14,6 @@ library(doParallel)
 registerDoParallel(cores = detectCores()-1)
 
 # Functions
-setwd('/Users/niloybiswas/Dropbox/Apps/Overleaf/couplings/code/paper_examples/')
 source('kernels.R')
 source('estimators.R')
 source('rcpp_functions.R')
