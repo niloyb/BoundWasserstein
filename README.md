@@ -12,6 +12,11 @@ These scripts reproduce the results of the article **[Bounding Wasserstein dista
 ```
 
 All commands below should be run from this repository base directory.
+- `estimators.R` contains functions for computing Wasserstein upper and lower bound estimates
+    - `wp_ub_estimate(coupled_chain_sampler, no_chains, p=1, metric, parallel=TRUE)` returns coupled upper bound (CUB) estimates for the p-Wasserstein distance
+    - `w2l2_lb_gelbrich(chain1,chain2)` returns the Gelbrich lower bound for 2-Wasserstein distance with the L2 metric
+    - `W2LBmarginals(chain1,chain2)` returns the marginal-based lower bound for 2-Wasserstein distance with the L2 metric
+    - `W2L2_UBLB_estimates(chain_sampler, no_chains, parallel=TRUE, lb='max_gelbrich_marginals')` returns 2-Wasserstein upper and lower bound estimates
 -	`stylized_example_mvn` contains code for Figure 1.
     - To reproduce Figure 1 run `source('stylized_example_mvn/mvn_plots.R')`
 -	`stylized_example_ula_mala` contains code for Figure 2.
