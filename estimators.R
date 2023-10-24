@@ -20,17 +20,17 @@ wp_ub_estimate <-
     }
     
     if(no_chains==1){
-      wp_power_p_ub_mean_tracjectory <- trajectories^p
+      wp_power_p_ub_mean_trajectory <- trajectories^p
       wp_ub_se <- NA
     } else{
-      wp_power_p_ub_mean_tracjectory <- colMeans(trajectories^p)
+      wp_power_p_ub_mean_trajectory <- colMeans(trajectories^p)
       wp_power_p_ubs <- rowMeans(trajectories^p)
       wp_power_p_ub_se <- sd(wp_power_p_ubs)/sqrt(no_chains)
     }
-    wp_power_p_ub <- mean(wp_power_p_ub_mean_tracjectory)
+    wp_power_p_ub <- mean(wp_power_p_ub_mean_trajectory)
     
-    return(list('wp_power_p_ub_tracjectories' = trajectories^p,
-                'wp_power_p_ub_mean_tracjectory' = wp_power_p_ub_mean_tracjectory,
+    return(list('wp_power_p_ub_trajectories' = trajectories^p,
+                'wp_power_p_ub_mean_trajectory' = wp_power_p_ub_mean_trajectory,
                 'wp_power_p_ub_mean'=wp_power_p_ub, 'wp_power_p_ub_se'=wp_power_p_ub_se))
   }
 
