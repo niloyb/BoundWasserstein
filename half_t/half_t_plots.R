@@ -7,8 +7,8 @@ library(ggplot2)
 library(latex2exp)
 
 # setwd('/Users/niloybiswas/Dropbox/Apps/Overleaf/couplings/code/paper_examples/')
-# load("half_t/half_t_bounds_df_riboflavin.RData")
-# load("half_t/half_t_bounds_df_synthetic.RData")
+load("half_t/half_t_bounds_df_riboflavin.RData")
+load("half_t/half_t_bounds_df_synthetic.RData")
 
 half_t_wass_bounds_plot <- 
   ggplot(bounds_df, aes(x=as.factor(approxMCMCparam), y=W2L2UBmean)) + 
