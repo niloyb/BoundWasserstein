@@ -1,5 +1,4 @@
 rm(list = ls())
-setwd('/Users/niloybiswas/Dropbox/Apps/Overleaf/couplings/code/paper_examples/')
 source(file = 'kernels.R')
 source(file = 'estimators.R')
 source(file = 'implementation_plots/mvn_mixture_functions.R')
