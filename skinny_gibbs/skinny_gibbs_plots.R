@@ -6,7 +6,7 @@ library(latex2exp)
 
 
 # setwd('/Users/niloybiswas/Dropbox/Apps/Overleaf/couplings/code/paper_examples/')
-# load("skinny_gibbs/skinny_gibbs_df.RData")
+load("skinny_gibbs/skinny_gibbs_df.RData")
 
 skinny_gibbs_df$dataset[1] <- "1.malware"
 skinny_gibbs_df$dataset[2] <- "2.lymph"
